@@ -1,0 +1,85 @@
+version: "3.9"
+
+services:
+  apache:
+    build:
+      context: ./apache
+      dockerfile: Dockerfile
+    container_name: pf-apache
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT}:80"   # HTTP (redirigeix a HTTPS)
+      - "8443:443"             # HTTPS (frontend.local / api.local)
+    volumes:
+      - ./apache/conf:/usr/local/apache2/conf
+      - ./apache/sites:/usr/local/apache2/sites
+      - ./logs/apache:/usr/local/apache2/logs
+    environment:
+      - TZ=${TZ}
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - frontend-network
+      - backend-network
+
+  mysql:
+    image: mysql:8.0.35
+    container_name: pf-mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - TZ=${TZ}
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - backend-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: pf-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - backend-network
+
+  phpmyadmin:
+    image: phpmyadmin:5.2-apache
+    container_name: pf-phpmyadmin
+    restart: unless-stopped
+    environment:
+      - PMA_HOST=mysql
+      - PMA_USER=${MYSQL_USER}
+      - PMA_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "${PHPMYADMIN_PORT}:80"
+    depends_on:
+      - mysql
+    networks:
+      - backend-network
+
+networks:
+  frontend-network:
+    driver: bridge
+  backend-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  redis-data:
