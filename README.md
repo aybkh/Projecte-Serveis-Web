@@ -26,7 +26,7 @@ Tot el sistema està separat en **dues xarxes** (frontend/backend), utilitza **v
                  backend-network  │
                                   │
  ┌────────────┐    backend   ┌─────────────┐
- │   Redis    │◀────────────▶│   MySQL     │
+ │   Redis    │◀───────────▶│   MySQL     │
  │ (cache)    │              │ (database)  │
  └─────▲──────┘              └──────▲──────┘
        │                            │
@@ -34,8 +34,8 @@ Tot el sistema està separat en **dues xarxes** (frontend/backend), utilitza **v
        ▼                            │
  ┌──────────────────────────────────────────┐
  │                  Apache                  │
- │            HTTPS + VHOSTS               │
- │  frontend.local | api.local             │
+ │            HTTPS + VHOSTS                │
+ │  frontend.local | api.local              │
  └─────────────────┬────────────────────────┘
                    │
                    │ frontend-network
