@@ -1,364 +1,155 @@
-# Projecte Final – Stack Docker (Apache + MySQL + Redis + API)
+# Projecte Final d'Integració
 
-## 📌 Descripció General
+Aquest projecte consisteix en una aplicació web completa desplegada mitjançant **Docker Compose**. Integra diversos serveis per simular un entorn de producció real amb separació de responsabilitats, seguretat i rendiment.
 
-Aquest projecte implementa un **stack complet d’integració** utilitzant **Docker Compose**, format per:
+## 🏗️ Arquitectura del Sistema
 
-- **Apache** (amb HTTPS, Virtual Hosts, mod_rewrite, logs JSON i capçaleres segures)
-- **MySQL 8.0.35** (base de dades persistent + inicialització)
-- **Redis 7** (cache + comptador de visites)
-- **phpMyAdmin** (administració web)
-- **Frontend** (`frontend.local`)
-- **API REST** (`api.local`)
+El sistema utilitza una arquitectura de contenidors orquestrada, separada en dues xarxes per millorar la seguretat.
 
-Tot el sistema està separat en **dues xarxes** (frontend/backend), utilitza **volums persistents**, fitxer **.env** amb credencials, i implementa un **flux real d’aplicació** amb comunicació entre contenidors.
-
----
-
-# 🚀 Arquitectura del sistema
-
-```text
-                          ┌──────────────────┐
-                          │  phpMyAdmin      │
-                          │   (8081)         │
-                          └───────▲──────────┘
-                                  │
-                 backend-network  │
-                                  │
- ┌────────────┐    backend   ┌─────────────┐
- │   Redis    │◀───────────▶│   MySQL     │
- │ (cache)    │              │ (database)  │
- └─────▲──────┘              └──────▲──────┘
-       │                            │
-       │ backend-network            │
-       ▼                            │
- ┌──────────────────────────────────────────┐
- │                  Apache                  │
- │            HTTPS + VHOSTS                │
- │  frontend.local | api.local              │
- └─────────────────┬────────────────────────┘
-                   │
-                   │ frontend-network
-                   ▼
-         Navegador (client)
-
+```mermaid
+graph TD
+    User[Usuari / Navegador] -->|HTTP:8000 / HTTPS:8443| Apache
+    
+    subgraph "Frontend Network"
+        Apache[Apache Web Server]
+    end
+    
+    subgraph "Backend Network"
+        Apache -->|TCP 3306| MySQL[(MySQL Database)]
+        Apache -->|TCP 6379| Redis[(Redis Cache)]
+        PMA[phpMyAdmin] -->|TCP 3306| MySQL
+    end
 ```
 
+### Components:
+1.  **Apache (Frontend/API)**: Servidor web principal.
+    *   Actua com a punt d'entrada únic (Reverse Proxy).
+    *   Gestiona dos Virtual Hosts: `frontend.local` i `api.local`.
+    *   Implementa SSL/TLS amb certificats auto-signats.
+    *   Força la redirecció HTTPS.
+2.  **MySQL (Base de Dades)**: Emmagatzematge persistent.
+    *   Conté les dades d'usuaris i articles.
+    *   Inicialització automàtica amb dades de prova.
+3.  **Redis (Cache)**: Emmagatzematge en memòria d'alt rendiment.
+    *   Utilitzat per comptar les visites de la pàgina en temps real.
+4.  **phpMyAdmin**: Eina d'administració.
+    *   Interfície web per gestionar la base de dades MySQL visualment.
+
 ---
 
-# 📁 Estructura del projecte
+## 📂 Estructura del Projecte
 
 ```text
 projecte-final/
-├── docker-compose.yml
-├── .env
-├── .gitignore
-├── README.md
-│
+├── docker-compose.yml      # Definició de tots els serveis i xarxes
+├── .env                    # Variables d'entorn (credencials, ports)
+├── README.md               # Documentació del projecte
 ├── apache/
-│   ├── Dockerfile
+│   ├── Dockerfile          # Imatge personalitzada d'Apache + PHP + Extensions
 │   ├── conf/
-│   │   ├── httpd.conf
-│   │   └── vhosts/
-│   │        ├── frontend.conf
-│   │        └── api.conf
-│   └── sites/
-│       ├── frontend/
-│       │   ├── index.php
-│       │   └── .htaccess
-│       └── api/
-│           ├── index.php
-│           └── .htaccess
-│
+│   │   ├── httpd.conf      # Configuració principal d'Apache
+│   │   └── vhosts/         # Configuració dels Virtual Hosts
+│   │       ├── frontend.conf
+│   │       └── api.conf
+│   └── sites/              # Codi font de les aplicacions
+│       ├── frontend/       # Web principal (HTML/PHP)
+│       └── api/            # API REST (PHP)
 ├── mysql/
 │   └── init/
-│       └── 01-schema.sql
-│
-└── logs/
+│       └── 01-schema.sql   # Script SQL per crear taules i dades inicials
+└── logs/                   # Logs d'accés i error d'Apache (muntats des del contenidor)
 ```
 
 ---
 
-# ⚙️ Fitxer `.env`
+## 🚀 Guia d'Implementació i Desplegament
 
-```env
-MYSQL_ROOT_PASSWORD=supersecret
-MYSQL_DATABASE=appdb
-MYSQL_USER=appuser
-MYSQL_PASSWORD=apppassword
+Segueix aquests passos per posar en marxa el projecte des de zero.
 
-PHPMYADMIN_PORT=8081
-FRONTEND_PORT=8080
-API_PORT=8082
-TZ=Europe/Madrid
+### 1. Requisits Previs
+*   Tenir **Docker Desktop** instal·lat i en execució.
+*   Assegurar-se que els ports **8000**, **8443** i **8080** estan lliures a la teva màquina.
+
+### 2. Configuració de DNS Local
+Perquè els dominis `frontend.local` i `api.local` funcionin al teu ordinador, has d'editar el fitxer `hosts`.
+
+*   **Windows**: Obre el Bloc de notes com a Administrador i edita `C:\Windows\System32\drivers\etc\hosts`.
+*   **Linux/Mac**: Edita `/etc/hosts` amb `sudo`.
+
+Afegeix aquestes línies al final del fitxer:
+```text
+127.0.0.1 frontend.local
+127.0.0.1 api.local
 ```
 
----
+### 3. Configuració d'Entorn
+El fitxer `.env` ja està creat amb la configuració per defecte. Si necessites canviar contrasenyes, fes-ho aquí abans d'iniciar els contenidors.
 
-# 🐳 Fitxer `docker-compose.yml`
-
-```yaml
-version: "3.9"
-
-services:
-  apache:
-    build:
-      context: ./apache
-      dockerfile: Dockerfile
-    container_name: pf-apache
-    restart: unless-stopped
-    ports:
-      - "${FRONTEND_PORT}:80"
-      - "8443:443"
-    volumes:
-      - ./apache/conf:/usr/local/apache2/conf
-      - ./apache/sites:/usr/local/apache2/sites
-      - ./logs/apache:/usr/local/apache2/logs
-    environment:
-      - TZ=${TZ}
-    depends_on:
-      - mysql
-      - redis
-    networks:
-      - frontend-network
-      - backend-network
-
-  mysql:
-    image: mysql:8.0.35
-    container_name: pf-mysql
-    restart: unless-stopped
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - ./mysql/init:/docker-entrypoint-initdb.d
-    ports:
-      - "3306:3306"
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    networks:
-      - backend-network
-
-  redis:
-    image: redis:7-alpine
-    container_name: pf-redis
-    restart: unless-stopped
-    command: ["redis-server", "--appendonly", "yes"]
-    volumes:
-      - redis-data:/data
-    ports:
-      - "6379:6379"
-    networks:
-      - backend-network
-
-  phpmyadmin:
-    image: phpmyadmin:5.2-apache
-    container_name: pf-phpmyadmin
-    restart: unless-stopped
-    environment:
-      - PMA_HOST=mysql
-      - PMA_USER=${MYSQL_USER}
-      - PMA_PASSWORD=${MYSQL_PASSWORD}
-    ports:
-      - "${PHPMYADMIN_PORT}:80"
-    networks:
-      - backend-network
-
-networks:
-  frontend-network:
-    driver: bridge
-  backend-network:
-    driver: bridge
-
-volumes:
-  mysql-data:
-  redis-data:
-```
-
----
-
-# 🔐 Apache Dockerfile
-
-```dockerfile
-FROM httpd:2.4.65-alpine
-
-RUN apk add --no-cache openssl
-
-RUN mkdir -p /usr/local/apache2/certs
-
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048     -keyout /usr/local/apache2/certs/server.key     -out /usr/local/apache2/certs/server.crt     -subj "/C=ES/ST=Catalunya/L=Girona/O=ASIX/OU=Dev/CN=frontend.local"
-
-COPY conf/httpd.conf /usr/local/apache2/conf/httpd.conf
-COPY conf/vhosts/ /usr/local/apache2/conf/vhosts/
-COPY sites/ /usr/local/apache2/sites/
-
-EXPOSE 80 443
-
-CMD ["httpd-foreground"]
-```
-
----
-
-# 📜 apache/conf/httpd.conf
-
-```apache
-ServerRoot "/usr/local/apache2"
-Listen 80
-Listen 443
-
-LoadModule mpm_event_module modules/mod_mpm_event.so
-LoadModule rewrite_module modules/mod_rewrite.so
-LoadModule ssl_module modules/mod_ssl.so
-LoadModule headers_module modules/mod_headers.so
-LoadModule log_config_module modules/mod_log_config.so
-
-TypesConfig conf/mime.types
-DirectoryIndex index.php index.html
-
-LogFormat "{ "time":"%{%Y-%m-%dT%H:%M:%S}t", "vhost":"%v", "client":"%h", "request":"%r", "status":%>s }" json
-CustomLog "logs/access-json.log" json
-
-Include conf/vhosts/*.conf
-```
-
----
-
-# 🌐 Virtual Host Frontend (`frontend.conf`)
-
-```apache
-<VirtualHost *:80>
-    ServerName frontend.local
-    RewriteEngine On
-    RewriteRule ^/(.*)$ https://frontend.local/$1 [R=301,L]
-</VirtualHost>
-
-<VirtualHost *:443>
-    ServerName frontend.local
-    DocumentRoot "/usr/local/apache2/sites/frontend"
-
-    SSLEngine on
-    SSLCertificateFile "/usr/local/apache2/certs/server.crt"
-    SSLCertificateKeyFile "/usr/local/apache2/certs/server.key"
-
-    <Directory "/usr/local/apache2/sites/frontend">
-        AllowOverride All
-        Require all granted
-    </Directory>
-
-    Header always set Strict-Transport-Security "max-age=31536000"
-    Header always set X-Frame-Options "SAMEORIGIN"
-
-</VirtualHost>
-```
-
----
-
-# 🌐 Virtual Host API (`api.conf`)
-
-```apache
-<VirtualHost *:80>
-    ServerName api.local
-    RewriteEngine On
-    RewriteRule ^/(.*)$ https://api.local/$1 [R=301,L]
-</VirtualHost>
-
-<VirtualHost *:443>
-    ServerName api.local
-    DocumentRoot "/usr/local/apache2/sites/api"
-
-    SSLEngine on
-    SSLCertificateFile "/usr/local/apache2/certs/server.crt"
-    SSLCertificateKeyFile "/usr/local/apache2/certs/server.key"
-
-    <Directory "/usr/local/apache2/sites/api">
-        AllowOverride All
-        Require all granted
-    </Directory>
-</VirtualHost>
-```
-
----
-
-# 🗄️ MySQL – Fitxer d’inicialització (`01-schema.sql`)
-
-```sql
-CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(100),
-  email VARCHAR(150),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE articles (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT,
-  title VARCHAR(200),
-  content TEXT,
-  published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id)
-);
-
-INSERT INTO users (username, email) VALUES
-('ayoub', 'ayoub@example.com'),
-('admin', 'admin@example.com');
-
-INSERT INTO articles (user_id, title, content) VALUES
-(1, 'Primer article', 'Contingut de prova…');
-```
-
----
-
-# 🌍 Frontend `index.php`
-
-*(S'ha omès aquí per espai; el fitxer complet està inclòs a la carpeta final.)*
-
----
-
-# 🌍 API REST `index.php`
-
-*(També inclòs al projecte final.)*
-
----
-
-# ▶️ Com executar el projecte
+### 4. Desplegament amb Docker Compose
+Obre un terminal a la carpeta arrel del projecte (`projecte-final`) i executa:
 
 ```bash
-docker compose up -d --build
+docker-compose up -d --build
 ```
 
-Accedeix a:
+*   `up`: Crea i inicia els contenidors.
+*   `-d`: Mode "detach" (s'executa en segon pla).
+*   `--build`: Força la construcció de la imatge d'Apache (necessari si has modificat el Dockerfile o configuracions).
 
-| Servei | URL |
-|--------|-----|
-| **Frontend** | https://frontend.local |
-| **API REST** | https://api.local/api/articles |
-| **phpMyAdmin** | http://localhost:8081 |
-| **MySQL** | port 3306 |
-| **Redis** | port 6379 |
+### 5. Verificació
+Executa `docker-compose ps` per veure l'estat dels serveis. Tots haurien d'estar en estat "Up" (i MySQL en estat "Healthy").
 
 ---
 
-# ✔️ Funcionalitats implementades
+## 🌐 Accés a l'Aplicació
 
-- Sistema multi-contenidor complet
-- HTTPS autosignat
-- Redirecció HTTP → HTTPS
-- 2 Virtual Hosts separats
-- Logs JSON
-- Redis per a estadístiques (visites)
-- API REST real (GET/POST)
-- Inicialització MySQL automàtica
-- Variables d’entorn
+Un cop desplegat, pots accedir als diferents serveis a través de les següents URLs:
+
+| Servei | URL | Descripció |
+|--------|-----|------------|
+| **Frontend Web** | [https://frontend.local:8443](https://frontend.local:8443) | Pàgina principal amb estadístiques i articles. |
+| **API REST** | [https://api.local:8443/api/articles](https://api.local:8443/api/articles) | Endpoint JSON que retorna els articles. |
+| **phpMyAdmin** | [http://localhost:8080](http://localhost:8080) | Gestor de base de dades. |
+
+> **Nota de Seguretat**: En accedir per HTTPS, el navegador et mostrarà un avís de "Connexió no segura". Això és normal perquè estem utilitzant un certificat **auto-signat** generat durant el build. Has de fer clic a "Avançat" i "Acceptar el risc / Continuar".
+
+### Credencials per defecte (phpMyAdmin)
+*   **Servidor**: `mysql`
+*   **Usuari**: `appuser`
+*   **Contrasenya**: `apppassword`
 
 ---
 
-# ✨ Fi del README
-Projecte completament operatiu i preparat per a lliurar.
+## 🛠️ Detalls Tècnics i Funcionalitats
 
+### Servidor Web (Apache)
+*   **Ports Personalitzats**: S'han mapejat els ports del contenidor (80/443) als ports **8000** i **8443** del host per evitar conflictes.
+*   **Redirecció HTTPS**: Qualsevol petició HTTP al port 8000 és redirigida automàticament a HTTPS al port 8443 mitjançant `RewriteRule`.
+*   **Seguretat**: S'apliquen capçaleres de seguretat com HSTS, X-Frame-Options i Content-Security-Policy.
+*   **Logging**: Els logs es guarden en format JSON a la carpeta `./logs` del host per facilitar la seva anàlisi.
+
+### Aplicació PHP
+*   **Connexió a Redis**: El frontend connecta amb el servei `redis` per incrementar i mostrar un comptador de visites. S'ha configurat per ignorar peticions a `favicon.ico` i evitar comptar doble.
+*   **Connexió a MySQL**: Utilitza l'extensió `mysqli` per llegir i escriure articles.
+*   **API REST**: Implementa endpoints GET i POST, retornant respostes en format JSON correctament formatat.
+
+### Base de Dades
+*   **Persistència**: Les dades de MySQL es guarden en un volum de Docker (`mysql_data`), de manera que no es perden si reinicies els contenidors.
+*   **Inicialització**: Si la base de dades està buida, s'executa automàticament l'script `mysql/init/01-schema.sql`.
+
+---
+
+## ❓ Resolució de Problemes Comuns
+
+**1. Error "Address already in use"**
+Si els ports 8000, 8443 o 8080 estan ocupats, edita el fitxer `docker-compose.yml` i canvia la part esquerra del mapeig de ports (ex: `"9000:80"`).
+
+**2. Error de connexió a la Base de Dades**
+Si MySQL falla o phpMyAdmin no connecta, prova de reiniciar tot esborrant els volums per forçar una recreació neta:
+```bash
+docker-compose down -v
+docker-compose up -d --build
+```
+
+**3. El navegador no troba frontend.local**
+Assegura't que has editat correctament el fitxer `hosts` i que has desat els canvis amb permisos d'administrador.
