@@ -10,36 +10,41 @@ El sistema es basa en una arquitectura de **microserveis** contenidoritzats amb 
 graph TD
     User((Usuari / Navegador))
     
-    subgraph "Public Access Layer"
+    subgraph "Capa d'Accés Públic"
         Apache[Apache Web Server<br/>PHP 8.2]
-        Grafana[Grafana Dashboard]
+        Grafana[Panell Grafana]
         PMA[phpMyAdmin]
     end
 
-    subgraph "Data & Logic Layer (Backend Network)"
-        MySQL[(MySQL 8.0)]
-        Redis[(Redis Cache)]
+    subgraph "Xarxa Backend"
+        subgraph "Capa de Cache (Dades Calentes)"
+            Redis[(Redis 7)]
+        end
+        
+        subgraph "Capa de Persistència (Dades Fredes)"
+            MySQL[(MySQL 8.0)]
+        end
     end
 
-    subgraph "Observability Stack"
-        Prometheus[Prometheus<br/>TSDB]
+    subgraph "Stack d'Observabilitat"
+        Prometheus[Prometheus]
         cAdvisor[cAdvisor]
     end
 
-    %% Access Connections
+    %% Connexions d'Accés
     User -->|HTTPS :8443| Apache
     User -->|HTTP :3000| Grafana
     User -->|HTTP :8080| PMA
 
-    %% Internal Connections
-    Apache -->|SQL :3306| MySQL
-    Apache -->|RESP :6379| Redis
-    PMA -->|SQL :3306| MySQL
+    %% Flux de Dades
+    Apache -->|1. Consultar Cache| Redis
+    Apache -->|2. Consultar BD| MySQL
+    PMA -->|Administració| MySQL
 
-    %% Monitoring Connections
-    cAdvisor -.->|Metrics| DockerEngine[Docker Engine]
-    Prometheus -->|Scrape :8080| cAdvisor
-    Grafana -->|Query :9090| Prometheus
+    %% Connexions de Monitorització
+    cAdvisor -.->|Mètriques| DockerEngine[Motor Docker]
+    Prometheus -->|Recollida| cAdvisor
+    Grafana -->|Consulta| Prometheus
 ```
 
 ### 🧩 Components del Sistema
