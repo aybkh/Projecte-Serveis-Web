@@ -1,82 +1,86 @@
 <?php
-header('Content-Type: application/json');
+header("Content-Type: application/json");
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 
-$method = $_SERVER['REQUEST_METHOD'];
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // p.ex. /api/articles
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0);
+}
 
-// Config DB & Redis
-$mysqlHost = 'mysql';
-$mysqlDb   = getenv('MYSQL_DATABASE') ?: 'serveis';
-$mysqlUser = getenv('MYSQL_USER') ?: 'admin';
-$mysqlPass = getenv('MYSQL_PASSWORD') ?: 'A123456@';
+$mysql_host = getenv('MYSQL_HOST');
+$mysql_user = getenv('MYSQL_USER');
+$mysql_pass = getenv('MYSQL_PASSWORD');
+$mysql_db = getenv('MYSQL_DATABASE');
+$redis_host = getenv('REDIS_HOST');
 
-$redisHost = 'redis';
-$redisPort = 6379;
-
-try {
-    $pdo = new PDO("mysql:host=$mysqlHost;dbname=$mysqlDb;charset=utf8mb4", $mysqlUser, $mysqlPass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    $redis = new Redis();
-    $redis->connect($redisHost, $redisPort);
-} catch (Exception $e) {
+$mysqli = new mysqli($mysql_host, $mysql_user, $mysql_pass, $mysql_db);
+if ($mysqli->connect_error) {
     http_response_code(500);
-    echo json_encode(['error' => 'Error de connexió a backend', 'detail' => $e->getMessage()]);
+    echo json_encode(["error" => "Database connection failed: " . $mysqli->connect_error]);
     exit;
 }
 
-function json_response($data, $status = 200) {
-    http_response_code($status);
-    echo json_encode($data);
-    exit;
+$redis = new Redis();
+try {
+    $redis->connect($redis_host, 6379);
+} catch (Exception $e) {
+    // Redis might be down, but API should try to work
 }
 
-// ── Rutes ─────────────────────────
+$request_method = $_SERVER['REQUEST_METHOD'];
+$request_uri = $_SERVER['REQUEST_URI'];
+$request_path = parse_url($request_uri, PHP_URL_PATH);
+$path = trim($request_path, '/');
 
-if ($uri === '/api/articles' && $method === 'GET') {
-    $stmt = $pdo->query("SELECT a.id, a.title, a.content, a.published_at, u.username 
-                         FROM articles a 
-                         JOIN users u ON a.user_id = u.id 
-                         ORDER BY a.published_at DESC");
-    $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    json_response($articles);
+// Normalize path (handle /api/ prefix if present)
+if (strpos($path, 'api/') === 0) {
+    $path = substr($path, 4);
 }
 
-if ($uri === '/api/articles' && $method === 'POST') {
-    $user_id = $_POST['user_id'] ?? 1;
-    $title   = trim($_POST['title'] ?? '');
-    $content = trim($_POST['content'] ?? '');
-
-    if ($title === '' || $content === '') {
-        json_response(['error' => 'Falten camps'], 400);
+if ($path === 'articles') {
+    if ($request_method === 'GET') {
+        $result = $mysqli->query("SELECT * FROM articles");
+        $articles = [];
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $articles[] = $row;
+            }
+        }
+        echo json_encode($articles);
+    } elseif ($request_method === 'POST') {
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (isset($data['title']) && isset($data['content'])) {
+            $title = $mysqli->real_escape_string($data['title']);
+            $content = $mysqli->real_escape_string($data['content']);
+            $user_id = 1;
+            $sql = "INSERT INTO articles (user_id, title, content) VALUES ('$user_id', '$title', '$content')";
+            if ($mysqli->query($sql)) {
+                http_response_code(201);
+                echo json_encode(["message" => "Article created", "id" => $mysqli->insert_id]);
+            } else {
+                http_response_code(500);
+                echo json_encode(["error" => "Failed to create article"]);
+            }
+        } else {
+            http_response_code(400);
+            echo json_encode(["error" => "Invalid input"]);
+        }
     }
-
-    $stmt = $pdo->prepare("INSERT INTO articles (user_id, title, content) VALUES (?, ?, ?)");
-    $stmt->execute([$user_id, $title, $content]);
-
-    // incrementem comptador d'articles a Redis
-    $redis->incr('stats_articles_creats');
-
-    // Per fer-ho simple, redirigim al frontend
-    if (!empty($_SERVER['HTTP_REFERER'])) {
-        header('Location: ' . $_SERVER['HTTP_REFERER']);
-    } else {
-        json_response(['status' => 'ok']);
+} elseif ($path === 'stats') {
+    if ($request_method === 'GET') {
+        $visits = $redis->get('visits');
+        $user_count = $mysqli->query("SELECT COUNT(*) as c FROM users")->fetch_assoc()['c'];
+        $article_count = $mysqli->query("SELECT COUNT(*) as c FROM articles")->fetch_assoc()['c'];
+        
+        echo json_encode([
+            "visits" => $visits ? (int)$visits : 0,
+            "users" => (int)$user_count,
+            "articles" => (int)$article_count
+        ]);
     }
-    exit;
+} else {
+    http_response_code(404);
+    echo json_encode(["error" => "Not Found", "path" => $path]);
 }
-
-if ($uri === '/api/stats' && $method === 'GET') {
-    $totalUsers = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
-    $totalArticles = $pdo->query("SELECT COUNT(*) FROM articles")->fetchColumn();
-    $visites = $redis->get('frontend_visites') ?: 0;
-
-    json_response([
-        'visites'  => (int)$visites,
-        'usuaris'  => (int)$totalUsers,
-        'articles' => (int)$totalArticles
-    ]);
-}
-
-// Ruta no trobada
-json_response(['error' => 'Not found'], 404);
+?>
