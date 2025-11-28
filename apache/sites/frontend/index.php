@@ -1,105 +1,101 @@
 <?php
-// Config DB
-$mysqlHost = 'mysql';
-$mysqlDb   = getenv('MYSQL_DATABASE') ?: 'serveis';
-$mysqlUser = getenv('MYSQL_USER') ?: 'admin';
-$mysqlPass = getenv('MYSQL_PASSWORD') ?: 'A123456@';
+$mysql_host = getenv('MYSQL_HOST');
+$mysql_user = getenv('MYSQL_USER');
+$mysql_pass = getenv('MYSQL_PASSWORD');
+$mysql_db = getenv('MYSQL_DATABASE');
+$redis_host = getenv('REDIS_HOST');
 
-// Redis
-$redisHost = 'redis';
-$redisPort = 6379;
-
-// Visites amb Redis
-$visites = 0;
-$redisError = null;
+// Connect to Redis
+$redis = new Redis();
 try {
-    $redis = new Redis();
-    $redis->connect($redisHost, $redisPort);
-    $visites = $redis->incr('frontend_visites');
+    $redis->connect($redis_host, 6379);
+    $visits = $redis->incr('visits');
 } catch (Exception $e) {
-    $redisError = $e->getMessage();
+    $visits = "Redis Error: " . $e->getMessage();
 }
 
-// Articles MySQL
-$articles = [];
-$dbError = null;
-try {
-    $pdo = new PDO("mysql:host=$mysqlHost;dbname=$mysqlDb;charset=utf8mb4", $mysqlUser, $mysqlPass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    $stmt = $pdo->query("SELECT a.id, a.title, a.content, a.published_at, u.username 
-                         FROM articles a 
-                         JOIN users u ON a.user_id = u.id 
-                         ORDER BY a.published_at DESC 
-                         LIMIT 5");
-    $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) {
-    $dbError = $e->getMessage();
+// Connect to MySQL
+$mysqli = new mysqli($mysql_host, $mysql_user, $mysql_pass, $mysql_db);
+if ($mysqli->connect_error) {
+    die("Connection failed: " . $mysqli->connect_error);
 }
+
+// Handle Form Submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['title'])) {
+    $title = $mysqli->real_escape_string($_POST['title']);
+    $content = $mysqli->real_escape_string($_POST['content']);
+    $user_id = 1; // Hardcoded for now
+    $sql = "INSERT INTO articles (user_id, title, content) VALUES ('$user_id', '$title', '$content')";
+    $mysqli->query($sql);
+    // Redirect to avoid resubmission
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
+}
+
+// Fetch Articles
+$result = $mysqli->query("SELECT * FROM articles ORDER BY published_at DESC LIMIT 5");
 ?>
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>frontend.local – Projecte Final</title>
-<style>
-    body{margin:0;font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;background:linear-gradient(135deg,#141e30,#243b55);color:#fff;}
-    .wrap{max-width:1000px;margin:40px auto;padding:30px;background:rgba(255,255,255,0.05);border-radius:20px;backdrop-filter:blur(10px);box-shadow:0 15px 40px rgba(0,0,0,0.5);}
-    h1{margin-top:0;font-size:2.4rem;}
-    .stats,.articles,.form{margin-top:25px;padding:20px;border-radius:15px;background:rgba(0,0,0,0.3);}
-    .stat-number{font-size:2rem;font-weight:bold;}
-    .article{padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.1);}
-    label{display:block;margin-top:10px;}
-    input[type=text],textarea{width:100%;padding:8px;border-radius:8px;border:none;margin-top:4px;}
-    button{margin-top:15px;padding:10px 18px;border-radius:8px;border:none;background:#00c853;color:#fff;font-weight:bold;cursor:pointer;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend - Projecte Final</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 0 auto; padding: 40px; background-color: #f0f2f5; color: #333; }
+        h1 { color: #2c3e50; text-align: center; margin-bottom: 40px; }
+        .container { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .stats { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); height: fit-content; }
+        .stats h3 { margin-top: 0; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 10px; }
+        .stats p { font-size: 1.2em; }
+        .article { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; transition: transform 0.2s; }
+        .article:hover { transform: translateY(-2px); }
+        .article h2 { margin-top: 0; color: #2c3e50; }
+        .article small { color: #888; display: block; margin-top: 10px; }
+        form { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit; transition: border-color 0.3s; }
+        input:focus, textarea:focus { border-color: #667eea; outline: none; }
+        button { background: #667eea; color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: background 0.3s; }
+        button:hover { background: #5a6fd1; }
+        .create-article h3 { margin-top: 0; color: #2c3e50; }
+    </style>
 </head>
 <body>
-<div class="wrap">
-    <h1>frontend.local – Projecte Final</h1>
-    <p>Autor: <strong>Ayoub Khalifi</strong></p>
+    <h1>Projecte Final Integration</h1>
+    
+    <div class="container">
+        <div class="main-content">
+            <div class="create-article">
+                <h3>Create New Article</h3>
+                <form method="POST">
+                    <input type="text" name="title" placeholder="Article Title" required>
+                    <textarea name="content" placeholder="Write something amazing..." rows="5" required></textarea>
+                    <button type="submit">Publish Article</button>
+                </form>
+            </div>
 
-    <div class="stats">
-        <h2>📊 Estadístiques</h2>
-        <?php if ($redisError): ?>
-            <p style="color:#ff8a80">Error Redis: <?= htmlspecialchars($redisError) ?></p>
-        <?php else: ?>
-            <p>Nombre de visites (Redis): <span class="stat-number"><?= (int)$visites ?></span></p>
-        <?php endif; ?>
-    </div>
+            <h3 style="margin-top: 30px;">Latest Articles</h3>
+            <?php if ($result): ?>
+                <?php while($row = $result->fetch_assoc()): ?>
+                    <div class="article">
+                        <h2><?php echo htmlspecialchars($row['title']); ?></h2>
+                        <p><?php echo nl2br(htmlspecialchars($row['content'])); ?></p>
+                        <small>Published: <?php echo $row['published_at']; ?></small>
+                    </div>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <p>No articles found or database error.</p>
+            <?php endif; ?>
+        </div>
 
-    <div class="articles">
-        <h2>📰 Últims 5 articles (MySQL)</h2>
-        <?php if ($dbError): ?>
-            <p style="color:#ff8a80">Error MySQL: <?= htmlspecialchars($dbError) ?></p>
-        <?php elseif (!$articles): ?>
-            <p>No hi ha articles.</p>
-        <?php else: ?>
-            <?php foreach ($articles as $a): ?>
-                <div class="article">
-                    <h3><?= htmlspecialchars($a['title']) ?></h3>
-                    <small>Autor: <?= htmlspecialchars($a['username']) ?> – <?= $a['published_at'] ?></small>
-                    <p><?= nl2br(htmlspecialchars($a['content'])) ?></p>
-                </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
+        <div class="sidebar">
+            <div class="stats">
+                <h3>Live Statistics</h3>
+                <p>Total Page Visits: <strong><?php echo $visits; ?></strong></p>
+                <p>Database Status: <strong><?php echo $mysqli->ping() ? 'Connected' : 'Disconnected'; ?></strong></p>
+                <p>Redis Status: <strong><?php echo $redis->ping() ? 'Connected' : 'Disconnected'; ?></strong></p>
+            </div>
+        </div>
     </div>
-
-    <div class="form">
-        <h2>➕ Crear nou article</h2>
-        <form action="https://api.local/api/articles" method="post">
-            <!-- de moment user_id fix 1 per simplificar -->
-            <input type="hidden" name="user_id" value="1">
-            <label>Títol
-                <input type="text" name="title" required>
-            </label>
-            <label>Contingut
-                <textarea name="content" rows="4" required></textarea>
-            </label>
-            <button type="submit">Enviar</button>
-        </form>
-        <p style="margin-top:10px;font-size:0.9rem">El formulari envia el POST a <code>api.local/api/articles</code>.</p>
-    </div>
-</div>
 </body>
 </html>
