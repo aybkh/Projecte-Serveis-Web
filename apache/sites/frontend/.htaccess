@@ -1,9 +1,5 @@
 RewriteEngine On
-
-# URLs amigables per a .php
+RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME}\.php -f
-RewriteRule ^(.+)$ $1.php [L]
-
-# Bloquejar /private
-RewriteRule ^private/ - [F,L]
+RewriteRule ^favicon\.ico$ - [L]
+RewriteRule ^ index.php [QSA,L]
