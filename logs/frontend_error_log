@@ -1,0 +1,13 @@
+[Thu Nov 27 20:58:09.930226 2025] [ssl:warn] [pid 1:tid 1] AH01906: frontend.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 20:58:09.999949 2025] [ssl:warn] [pid 1:tid 1] AH01906: frontend.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:05:26.461341 2025] [php:error] [pid 12:tid 12] [client 172.18.0.1:45156] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'appuser'@'172.18.0.5' (using password: YES) in /var/www/html/frontend/index.php:18\nStack trace:\n#0 /var/www/html/frontend/index.php(18): mysqli->__construct()\n#1 {main}\n  thrown in /var/www/html/frontend/index.php on line 18
+[Thu Nov 27 21:11:40.939209 2025] [ssl:warn] [pid 1:tid 1] AH01906: frontend.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:11:41.012694 2025] [ssl:warn] [pid 1:tid 1] AH01906: frontend.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:15:36.594853 2025] [ssl:warn] [pid 1:tid 1] AH01906: frontend.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:15:36.670416 2025] [ssl:warn] [pid 1:tid 1] AH01906: frontend.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:18:08.246069 2025] [ssl:warn] [pid 1:tid 1] AH01906: frontend.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:18:08.337445 2025] [ssl:warn] [pid 1:tid 1] AH01906: frontend.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:36:43.638953 2025] [ssl:warn] [pid 1:tid 1] AH01906: frontend.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:36:43.713399 2025] [ssl:warn] [pid 1:tid 1] AH01906: frontend.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Fri Nov 28 12:39:17.915247 2025] [ssl:warn] [pid 1:tid 1] AH01906: frontend.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Fri Nov 28 12:39:17.964955 2025] [ssl:warn] [pid 1:tid 1] AH01906: frontend.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
