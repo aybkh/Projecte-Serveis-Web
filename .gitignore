@@ -1,8 +1,0 @@
-# sensitive
-.env
-
-# generated
-logs/
-mysql-data/
-redis-data/
-certs/
