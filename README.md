@@ -4,41 +4,59 @@ Aquest projecte consisteix en una aplicació web completa desplegada mitjançant
 
 ## 🏗️ Arquitectura del Sistema
 
-El sistema utilitza una arquitectura de microserveis orquestrada, separada en xarxes per millorar la seguretat i incloent una pila de monitorització completa.
+El sistema es basa en una arquitectura de **microserveis** contenidoritzats amb Docker, dissenyada per ser robusta, segura i observable. L'arquitectura es divideix lògicament en capes de servei i xarxes aïllades.
 
 ```mermaid
 graph TD
-    User[Usuari / Navegador] -->|HTTPS:8443| Apache
-    User -->|HTTP:3000| Grafana
-    User -->|HTTP:8080| PMA[phpMyAdmin]
-
-    subgraph "Frontend Network"
-        Apache[Apache Web Server]
-    end
+    User((Usuari / Navegador))
     
-    subgraph "Backend Network"
-        Apache -->|TCP 3306| MySQL[(MySQL Database)]
-        Apache -->|TCP 6379| Redis[(Redis Cache)]
-        PMA -->|TCP 3306| MySQL
-        
-        cAdvisor[cAdvisor] -.->|Llegeix| DockerSocket[Docker Engine]
-        Prometheus[Prometheus] -->|Scrape| cAdvisor
-        Grafana[Grafana] -->|Query| Prometheus
+    subgraph "Public Access Layer"
+        Apache[Apache Web Server<br/>PHP 8.2]
+        Grafana[Grafana Dashboard]
+        PMA[phpMyAdmin]
     end
+
+    subgraph "Data & Logic Layer (Backend Network)"
+        MySQL[(MySQL 8.0)]
+        Redis[(Redis Cache)]
+    end
+
+    subgraph "Observability Stack"
+        Prometheus[Prometheus<br/>TSDB]
+        cAdvisor[cAdvisor]
+    end
+
+    %% Access Connections
+    User -->|HTTPS :8443| Apache
+    User -->|HTTP :3000| Grafana
+    User -->|HTTP :8080| PMA
+
+    %% Internal Connections
+    Apache -->|SQL :3306| MySQL
+    Apache -->|RESP :6379| Redis
+    PMA -->|SQL :3306| MySQL
+
+    %% Monitoring Connections
+    cAdvisor -.->|Metrics| DockerEngine[Docker Engine]
+    Prometheus -->|Scrape :8080| cAdvisor
+    Grafana -->|Query :9090| Prometheus
 ```
 
-### Components Principals:
-1.  **Apache (Frontend/API)**: Servidor web principal acting com a Reverse Proxy i servidor d'aplicació PHP.
-    *   Gestiona `frontend.local` i `api.local`.
-    *   Implementa SSL/TLS i força HTTPS.
-2.  **MySQL (Base de Dades)**: Emmagatzematge persistent per a usuaris i articles.
-3.  **Redis (Cache)**: Sistema de cache en memòria per al comptador de visites.
-4.  **phpMyAdmin**: Interfície d'administració de base de dades.
+### 🧩 Components del Sistema
 
-### Stack de Monitorització (Bonus):
-5.  **Prometheus**: Base de dades de sèries temporals que recull mètriques (scraping) cada 15 segons.
-6.  **cAdvisor**: Analitzador que extreu dades d'ús de recursos (CPU, Memòria, Xarxa) directament del nucli de Docker.
-7.  **Grafana**: Plataforma de visualització que permet crear dashboards interactius a partir de les dades de Prometheus.
+#### 1. Capa d'Aplicació (Frontend & API)
+*   **Apache HTTP Server**: Actua com a punt d'entrada únic. Configurat amb **Virtual Hosts** per separar el trànsit web (`frontend.local`) del trànsit de l'API (`api.local`). Gestiona la seguretat SSL/TLS i serveix l'aplicació PHP.
+
+#### 2. Capa de Dades
+*   **MySQL 8.0**: Base de dades relacional principal. Emmagatzema la informació persistent (usuaris, articles) en un volum dedicat per garantir la durabilitat de les dades.
+*   **Redis 7**: Magatzem de dades en memòria (Key-Value Store). Utilitzat per a operacions d'alt rendiment com el comptador de visites en temps real.
+
+#### 3. Eines de Gestió i Monitorització
+*   **phpMyAdmin**: Client web per a la gestió visual i administració de la base de dades MySQL.
+*   **Stack de Monitorització**:
+    *   **cAdvisor**: Recull mètriques de baix nivell (CPU, RAM, I/O) de tots els contenidors en execució.
+    *   **Prometheus**: Centralitza i emmagatzema les mètriques en una base de dades de sèries temporals.
+    *   **Grafana**: Visualitza les dades de Prometheus mitjançant quadres de comandament (dashboards) intuïtius.
 
 ---
 
