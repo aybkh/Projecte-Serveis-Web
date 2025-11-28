@@ -1,25 +1,24 @@
 FROM httpd:2.4.65-alpine
 
-LABEL maintainer="a.khalifi@sapalomera.cat"
-LABEL description="Apache HTTPD amb SSL, vhosts, logs JSON i PHP via CGI si cal"
+# Install PHP and extensions
+# We use php82. Adjust version if needed based on Alpine version in the base image.
+RUN apk update && apk add --no-cache \
+    php82 \
+    php82-apache2 \
+    php82-mysqli \
+    php82-json \
+    php82-openssl \
+    php82-curl \
+    php82-zlib \
+    php82-session \
+    php82-pecl-redis \
+    openssl
 
-# OpenSSL per generar certificats
-RUN apk add --no-cache openssl
+# Create certs directory
+RUN mkdir -p /usr/local/apache2/conf/certs
 
-# Crear carpeta de certificats
-RUN mkdir -p /usr/local/apache2/certs
-
-# Certificat autosignat (per frontend.local i api.local)
+# Generate self-signed certificate
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout /usr/local/apache2/certs/server.key \
-    -out /usr/local/apache2/certs/server.crt \
-    -subj "/C=ES/ST=Catalunya/L=Girona/O=ASIX/OU=Dev/CN=frontend.local"
-
-# Copiar configuració i llocs
-COPY conf/httpd.conf /usr/local/apache2/conf/httpd.conf
-COPY conf/vhosts/ /usr/local/apache2/conf/vhosts/
-COPY sites/ /usr/local/apache2/sites/
-
-EXPOSE 80 443
-
-CMD ["httpd-foreground"]
+    -keyout /usr/local/apache2/conf/certs/server.key \
+    -out /usr/local/apache2/conf/certs/server.crt \
+    -subj "/C=ES/ST=Barcelona/L=Barcelona/O=MyOrg/OU=IT/CN=frontend.local"
