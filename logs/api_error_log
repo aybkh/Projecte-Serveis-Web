@@ -23,3 +23,11 @@
 [Fri Nov 28 12:39:17.918282 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
 [Fri Nov 28 12:39:17.966231 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
 [Fri Nov 28 12:39:17.966795 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
+[Fri Nov 28 17:43:51.398650 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Fri Nov 28 17:43:51.399077 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
+[Fri Nov 28 17:43:51.447532 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Fri Nov 28 17:43:51.448101 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
+[Fri Nov 28 18:01:20.419756 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Fri Nov 28 18:01:20.420252 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
+[Fri Nov 28 18:01:20.490026 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Fri Nov 28 18:01:20.490653 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
