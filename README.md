@@ -112,6 +112,55 @@ Per visualitzar les mètriques del sistema:
 
 ---
 
+## 📸 Guia de Comprovació Pas a Pas
+
+Aquesta secció documenta el procés de validació del projecte, seguint els criteris d'avaluació.
+
+### Pas 1: Inici del Stack
+Execució de la comanda `docker-compose up -d --build` per aixecar tota la infraestructura.
+> **Evidència 1**: Captura del terminal mostrant la creació exitosa dels contenidors.
+*(Enganxa la captura aquí)*
+
+### Pas 2: Verificació d'Estat
+Comprovació que tots els contenidors estan "Up" i els healthchecks (MySQL) estan "healthy" amb `docker-compose ps`.
+> **Evidència 2**: Captura de la sortida de `docker-compose ps`.
+*(Enganxa la captura aquí)*
+
+### Pas 3: Accés Web i HTTPS
+Accés a `http://frontend.local:8000`. S'ha de verificar:
+1.  Redirecció automàtica a HTTPS (port 8443).
+2.  Avís de certificat auto-signat (demostra que SSL funciona).
+3.  Càrrega correcta de la pàgina principal.
+> **Evidència 3**: Captura del navegador mostrant la pàgina principal carregada amb el cadenat de seguretat (o l'avís).
+*(Enganxa la captura aquí)*
+
+### Pas 4: Funcionament de Redis
+En refrescar la pàgina, el comptador de "Total Page Visits" ha d'incrementar-se.
+> **Evidència 4**: Captura mostrant el comptador de visites amb un valor superior a 1.
+*(Enganxa la captura aquí)*
+
+### Pas 5: API REST
+Accés a l'endpoint `https://api.local:8443/api/articles` per verificar que retorna JSON.
+> **Evidència 5**: Captura de la resposta JSON amb la llista d'articles.
+*(Enganxa la captura aquí)*
+
+### Pas 6: Administració de Base de Dades
+Accés a phpMyAdmin (`http://localhost:8080`) i verificació de les taules creades.
+> **Evidència 6**: Captura de phpMyAdmin mostrant l'estructura de la taula `articles` o `users`.
+*(Enganxa la captura aquí)*
+
+### Pas 7: Monitorització (Bonus)
+Accés a Grafana (`http://localhost:3000`) per veure les mètriques en temps real.
+> **Evidència 7**: Captura del Dashboard de Grafana amb les gràfiques de CPU/RAM dels contenidors.
+*(Enganxa la captura aquí)*
+
+### Pas 8: Logs
+Verificació que els logs d'Apache s'estan escrivint a la carpeta local `./logs`.
+> **Evidència 8**: Captura de l'explorador de fitxers o terminal mostrant el contingut de la carpeta `logs`.
+*(Enganxa la captura aquí)*
+
+---
+
 ## 🛠️ Detalls Tècnics Destacats
 
 *   **Seguretat**: Redirecció automàtica HTTP->HTTPS (codi 301), HSTS activat, i xarxes Docker segregades (Frontend vs Backend).
