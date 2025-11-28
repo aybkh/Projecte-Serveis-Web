@@ -1,0 +1,25 @@
+[Thu Nov 27 20:58:09.933136 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 20:58:09.933965 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
+[Thu Nov 27 20:58:10.002191 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 20:58:10.002943 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
+[Thu Nov 27 21:04:15.909619 2025] [php:error] [pid 12:tid 12] [client 172.18.0.1:45072] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'appuser'@'172.18.0.5' (using password: YES) in /var/www/html/api/index.php:17\nStack trace:\n#0 /var/www/html/api/index.php(17): mysqli->__construct()\n#1 {main}\n  thrown in /var/www/html/api/index.php on line 17
+[Thu Nov 27 21:11:40.941582 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:11:40.942337 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
+[Thu Nov 27 21:11:41.015631 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:11:41.016338 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
+[Thu Nov 27 21:15:36.597523 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:15:36.598466 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
+[Thu Nov 27 21:15:36.673949 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:15:36.676302 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
+[Thu Nov 27 21:18:08.249479 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:18:08.250309 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
+[Thu Nov 27 21:18:08.339830 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:18:08.340583 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
+[Thu Nov 27 21:36:43.641663 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:36:43.642281 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
+[Thu Nov 27 21:36:43.715578 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Thu Nov 27 21:36:43.716275 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
+[Fri Nov 28 12:39:17.917452 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Fri Nov 28 12:39:17.918282 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
+[Fri Nov 28 12:39:17.966231 2025] [ssl:warn] [pid 1:tid 1] AH01906: api.local:443:0 server certificate is a CA certificate (BasicConstraints: CA == TRUE !?)
+[Fri Nov 28 12:39:17.966795 2025] [ssl:warn] [pid 1:tid 1] AH01909: api.local:443:0 server certificate does NOT include an ID which matches the server name
