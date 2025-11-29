@@ -10,7 +10,7 @@ El sistema es basa en una arquitectura de **microserveis** contenidoritzats amb 
 graph TD
     User((Usuari / Navegador))
     
-    subgraph "Capa d'Accés Públic"
+    subgraph
         Apache[Apache Web Server<br/>PHP 8.2]
         Grafana[Panell Grafana]
         PMA[phpMyAdmin]
