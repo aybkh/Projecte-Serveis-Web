@@ -27,11 +27,12 @@ graph TD
     end
 
     subgraph " "
+        DockerEngine[Docker Engine]
+    end
+
+    subgraph " "
         Prometheus[Prometheus]
         cAdvisor[cAdvisor]
-    end
-    subgraph " "
-        DockerEngine[Docker Engine]
     end
 
     %% Connexions d'Accés
