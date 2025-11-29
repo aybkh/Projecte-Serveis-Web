@@ -42,9 +42,9 @@ graph TD
     PMA -->|Administració| MySQL
 
     %% Connexions de Monitorització
-    cAdvisor -->|Mètriques| DockerEngine[Motor Docker]
-    Prometheus -->|Recollida| cAdvisor
-    Grafana -->|Consulta| Prometheus
+    cAdvisor -->|| DockerEngine[Docker Engine]
+    Prometheus -->|| cAdvisor
+    Grafana -->|| Prometheus
 ```
 
 ### 🧩 Components del Sistema
