@@ -42,7 +42,7 @@ graph TD
     PMA -->|Administració| MySQL
 
     %% Connexions de Monitorització
-    cAdvisor -.->|Mètriques| DockerEngine[Motor Docker]
+    cAdvisor -->|Mètriques| DockerEngine[Motor Docker]
     Prometheus -->|Recollida| cAdvisor
     Grafana -->|Consulta| Prometheus
 ```
