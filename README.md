@@ -10,23 +10,23 @@ El sistema es basa en una arquitectura de **microserveis** contenidoritzats amb 
 graph TD
     User((Usuari / Navegador))
     
-    subgraph ""
+    subgraph " "
         Apache[Apache Web Server<br/>PHP 8.2]
         Grafana[Panell Grafana]
         PMA[phpMyAdmin]
     end
 
-    subgraph ""
+    subgraph " "
         subgraph "Capa de Cache (Dades Calentes)"
             Redis[(Redis 7)]
         end
         
-        subgraph ""
+        subgraph " "
             MySQL[(MySQL 8.0)]
         end
     end
 
-    subgraph ""
+    subgraph " "
         Prometheus[Prometheus]
         cAdvisor[cAdvisor]
     end
