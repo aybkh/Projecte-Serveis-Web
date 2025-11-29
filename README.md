@@ -45,7 +45,7 @@ graph TD
     %% Connexions de Monitorització
     cAdvisor -->| | DockerEngine[Docker Engine]
     Prometheus -->| | cAdvisor
-    Grafana -->| | Prometheus
+    Grafana -->|Consulta| Prometheus
 ```
 
 ### 🧩 Components del Sistema
