@@ -85,10 +85,11 @@ projecte-final/
 │       └── api/            # API REST
 ├── mysql/
 │   └── init/
-│       └── 01-schema.sql   # Schema inicial de la BD
+│       ├── 01-schema.sql   # Schema inicial de la BD
+│       └── backup.sh       # Script de copia de seguretat
 ├── prometheus/
 │   └── prometheus.yml      # Configuració de scraping de Prometheus
-└── logs/                   # Logs persistents d'Apache
+└── logs/                   # Logs d'Apache
 ```
 
 ---
