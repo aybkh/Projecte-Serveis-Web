@@ -30,6 +30,9 @@ graph TD
         Prometheus[Prometheus]
         cAdvisor[cAdvisor]
     end
+    subgraph " "
+        DockerEngine[Docker Engine]
+    end
 
     %% Connexions d'Accés
     User -->|HTTPS :8443| Apache
