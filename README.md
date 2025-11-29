@@ -17,7 +17,7 @@ graph TD
     end
 
     subgraph " "
-        subgraph "Capa de Cache (Dades Calentes)"
+        subgraph " "
             Redis[(Redis 7)]
         end
         
