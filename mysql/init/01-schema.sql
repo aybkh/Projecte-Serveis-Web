@@ -14,11 +14,11 @@ CREATE TABLE IF NOT EXISTS articles (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-INSERT INTO users (username, email) VALUES ('admin', 'admin@example.com');
-INSERT INTO users (username, email) VALUES ('editor', 'editor@example.com');
+INSERT INTO users (username, email) VALUES ('admin', 'admin@ayoubjerari.com');
+INSERT INTO users (username, email) VALUES ('editor', 'editor@ayoubjerari.com');
 
-INSERT INTO articles (user_id, title, content) VALUES (1, 'Welcome to our Site', 'This is the first article on our new platform.');
-INSERT INTO articles (user_id, title, content) VALUES (1, 'Docker is Awesome', 'Docker Compose makes managing multi-container applications easy.');
-INSERT INTO articles (user_id, title, content) VALUES (2, 'PHP Tips', 'Here are some tips for writing better PHP code.');
-INSERT INTO articles (user_id, title, content) VALUES (2, 'MySQL Basics', 'Understanding relational databases is key.');
-INSERT INTO articles (user_id, title, content) VALUES (1, 'Redis Caching', 'Speed up your app with Redis.');
+INSERT INTO articles (user_id, title, content) VALUES (1, 'Bienvenido a nuestro sitio', 'Este es el primer articulo en nuestra nueva plataforma.');
+INSERT INTO articles (user_id, title, content) VALUES (1, 'Docker es increíble', 'Docker Compose facilita la gestion de aplicaciones multi-contenedor.');
+INSERT INTO articles (user_id, title, content) VALUES (2, 'Consejos de PHP', 'Aqui tienes algunos consejos para escribir mejor codigo PHP.');
+INSERT INTO articles (user_id, title, content) VALUES (2, 'Conceptos basicos de MySQL', 'Entender las bases de datos relacionales es clave.');
+INSERT INTO articles (user_id, title, content) VALUES (1, 'Cache con Redis', 'Acelera tu aplicacion con Redis.');
