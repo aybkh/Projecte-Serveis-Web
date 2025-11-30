@@ -1,7 +1,6 @@
 FROM httpd:2.4.65-alpine
 
-# Install PHP and extensions
-# We use php82. Adjust version if needed based on Alpine version in the base image.
+# Instal·lar PHP i extencions
 RUN apk update && apk add --no-cache \
     php82 \
     php82-apache2 \
@@ -14,10 +13,10 @@ RUN apk update && apk add --no-cache \
     php82-pecl-redis \
     openssl
 
-# Create certs directory
+# Crear la carpeta de certs
 RUN mkdir -p /usr/local/apache2/conf/certs
 
-# Generate self-signed certificate
+# Generar certificats
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout /usr/local/apache2/conf/certs/server.key \
     -out /usr/local/apache2/conf/certs/server.crt \
