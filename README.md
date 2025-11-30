@@ -48,7 +48,7 @@ graph TD
     Grafana -->|Consulta| Prometheus
 ```
 
-### 🧩 Components del Sistema
+###  Components del Sistema
 
 #### 1. Capa d'Aplicació (Frontend & API)
 *   **Apache HTTP Server**: Actua com a punt d'entrada únic. Configurat amb **Virtual Hosts** per separar el trànsit web (`frontend.local`) del trànsit de l'API (`api.local`). Gestiona la seguretat SSL/TLS i serveix l'aplicació PHP.
@@ -93,6 +93,31 @@ projecte-final/
 
 ---
 
+---
+
+## 🏗️ Script de Creació de l'Estructura
+
+Si vols crear tota l'estructura de carpetes i fitxers buits ràpidament, pots utilitzar aquest script a la teva terminal (Bash/Linux):
+
+```bash
+# Crear carpetes principals
+mkdir -p projecte-final/{apache/{conf/vhosts,sites/{frontend/assets,api},certs},mysql/init,prometheus,logs,backups}
+
+cd projecte-final
+
+touch docker-compose.yml .env README.md
+touch apache/Dockerfile
+touch apache/conf/httpd.conf
+touch apache/conf/vhosts/{frontend.conf,api.conf}
+touch apache/sites/frontend/{index.php,.htaccess}
+touch apache/sites/api/{index.php,.htaccess}
+touch mysql/init/01-schema.sql
+touch mysql/backup.sh
+touch prometheus/prometheus.yml
+```
+
+---
+
 ## 🚀 Guia d'Implementació i Desplegament
 
 ### 1. Requisits Previs
@@ -118,9 +143,20 @@ docker-compose up -d --build
 |--------|-----|----------------------|
 | **Frontend** | [https://frontend.local:8443](https://frontend.local:8443) | - |
 | **API** | [https://api.local:8443/api/articles](https://api.local:8443/api/articles) | - |
-| **phpMyAdmin** | [http://localhost:8080](http://localhost:8080) | User: `appuser` / Pass: `apppassword` |
-| **Grafana** | [http://localhost:3000](http://localhost:3000) | User: `admin` / Pass: `admin` |
+| **phpMyAdmin** | [http://localhost:8080](http://localhost:8080) | User: `admin` / Pass: `Passw0rd` |
+| **Grafana** | [http://localhost:3000](http://localhost:3000) | User: `admin` / Pass: `Passw0rd` |
 | **Prometheus** | [http://localhost:9090](http://localhost:9090) | - |
+
+### 5. Còpies de Seguretat (Backup)
+S'ha inclòs un script per realitzar backups automàtics de la base de dades MySQL.
+
+**Bash (Linux/Mac/Git Bash)**
+```bash
+./backup.sh
+```
+
+
+Els fitxers `.sql` es guardaran automàticament a la carpeta `backups/` amb la data i hora actuals.
 
 ---
 
@@ -136,7 +172,7 @@ Per visualitzar les mètriques del sistema:
 
 ---
 
-## 📸 Guia de Comprovació Pas a Pas
+## 📸 Comprovació
 
 Aquesta secció documenta el procés de validació del projecte, seguint els criteris d'avaluació.
 
