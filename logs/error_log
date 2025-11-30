@@ -38,3 +38,33 @@ AH00558: httpd: Could not reliably determine the server's fully qualified domain
 [Fri Nov 28 18:01:20.590299 2025] [mpm_prefork:notice] [pid 1:tid 1] AH00163: Apache/2.4.65 (Unix) OpenSSL/3.5.4 PHP/8.2.29 configured -- resuming normal operations
 [Fri Nov 28 18:01:20.591070 2025] [core:notice] [pid 1:tid 1] AH00094: Command line: 'httpd -D FOREGROUND'
 [Fri Nov 28 18:25:26.314913 2025] [mpm_prefork:notice] [pid 1:tid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.19.0.8. Set the 'ServerName' directive globally to suppress this message
+[Sat Nov 29 19:06:14.869605 2025] [ssl:warn] [pid 1:tid 1] AH01873: Init: Session Cache is not configured [hint: SSLSessionCache]
+[Sat Nov 29 19:06:14.960306 2025] [mpm_prefork:notice] [pid 1:tid 1] AH00163: Apache/2.4.65 (Unix) OpenSSL/3.5.4 PHP/8.2.29 configured -- resuming normal operations
+[Sat Nov 29 19:06:14.960641 2025] [core:notice] [pid 1:tid 1] AH00094: Command line: 'httpd -D FOREGROUND'
+[Sat Nov 29 20:39:55.453780 2025] [mpm_prefork:notice] [pid 1:tid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.19.0.2. Set the 'ServerName' directive globally to suppress this message
+[Sat Nov 29 20:40:16.005948 2025] [ssl:warn] [pid 1:tid 1] AH01873: Init: Session Cache is not configured [hint: SSLSessionCache]
+[Sat Nov 29 20:40:16.048655 2025] [mpm_prefork:notice] [pid 1:tid 1] AH00163: Apache/2.4.65 (Unix) OpenSSL/3.5.4 PHP/8.2.29 configured -- resuming normal operations
+[Sat Nov 29 20:40:16.049071 2025] [core:notice] [pid 1:tid 1] AH00094: Command line: 'httpd -D FOREGROUND'
+[Sat Nov 29 20:44:59.253151 2025] [mpm_prefork:notice] [pid 1:tid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.19.0.2. Set the 'ServerName' directive globally to suppress this message
+[Sat Nov 29 20:45:20.617300 2025] [ssl:warn] [pid 1:tid 1] AH01873: Init: Session Cache is not configured [hint: SSLSessionCache]
+[Sat Nov 29 20:45:20.652369 2025] [mpm_prefork:notice] [pid 1:tid 1] AH00163: Apache/2.4.65 (Unix) OpenSSL/3.5.4 PHP/8.2.29 configured -- resuming normal operations
+[Sat Nov 29 20:45:20.653417 2025] [core:notice] [pid 1:tid 1] AH00094: Command line: 'httpd -D FOREGROUND'
+[Sat Nov 29 20:50:20.731088 2025] [mpm_prefork:notice] [pid 1:tid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.18.0.8. Set the 'ServerName' directive globally to suppress this message
+[Sat Nov 29 20:50:42.006297 2025] [ssl:warn] [pid 1:tid 1] AH01873: Init: Session Cache is not configured [hint: SSLSessionCache]
+[Sat Nov 29 20:50:42.040031 2025] [mpm_prefork:notice] [pid 1:tid 1] AH00163: Apache/2.4.65 (Unix) OpenSSL/3.5.4 PHP/8.2.29 configured -- resuming normal operations
+[Sat Nov 29 20:50:42.040708 2025] [core:notice] [pid 1:tid 1] AH00094: Command line: 'httpd -D FOREGROUND'
+[Sat Nov 29 20:51:50.422897 2025] [mpm_prefork:notice] [pid 1:tid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.18.0.8. Set the 'ServerName' directive globally to suppress this message
+[Sat Nov 29 20:52:12.379355 2025] [ssl:warn] [pid 1:tid 1] AH01873: Init: Session Cache is not configured [hint: SSLSessionCache]
+[Sat Nov 29 20:52:12.419490 2025] [mpm_prefork:notice] [pid 1:tid 1] AH00163: Apache/2.4.65 (Unix) OpenSSL/3.5.4 PHP/8.2.29 configured -- resuming normal operations
+[Sat Nov 29 20:52:12.420451 2025] [core:notice] [pid 1:tid 1] AH00094: Command line: 'httpd -D FOREGROUND'
+[Sat Nov 29 20:55:58.071652 2025] [mpm_prefork:notice] [pid 1:tid 1] AH00170: caught SIGWINCH, shutting down gracefully
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 172.19.0.8. Set the 'ServerName' directive globally to suppress this message
+[Sat Nov 29 20:56:22.866344 2025] [ssl:warn] [pid 1:tid 1] AH01873: Init: Session Cache is not configured [hint: SSLSessionCache]
+[Sat Nov 29 20:56:22.900433 2025] [mpm_prefork:notice] [pid 1:tid 1] AH00163: Apache/2.4.65 (Unix) OpenSSL/3.5.4 PHP/8.2.29 configured -- resuming normal operations
+[Sat Nov 29 20:56:22.900914 2025] [core:notice] [pid 1:tid 1] AH00094: Command line: 'httpd -D FOREGROUND'
+[Sat Nov 29 21:54:02.715475 2025] [mpm_prefork:notice] [pid 1:tid 1] AH00170: caught SIGWINCH, shutting down gracefully
