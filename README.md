@@ -1,4 +1,4 @@
-# Projecte Final d'Integració
+<img width="3168" height="1344" alt="Image" src="https://github.com/user-attachments/assets/ee773772-b164-42a0-a758-1ceedd3e7936" />
 
 Aquest projecte consisteix en una aplicació web completa desplegada mitjançant **Docker Compose**. Integra diversos serveis per simular un entorn de producció real amb separació de responsabilitats, seguretat, rendiment i monitorització avançada.
 
@@ -179,46 +179,30 @@ Aquesta secció documenta el procés de validació del projecte, seguint els cri
 
 ### Pas 1: Inici del Stack
 Execució de la comanda `docker-compose up -d --build` per aixecar tota la infraestructura.
-> **Evidència 1**: Captura del terminal mostrant la creació exitosa dels contenidors.
-*(Enganxa la captura aquí)*
+<img width="1386" height="792" alt="Image" src="https://github.com/user-attachments/assets/0ba6df31-85d8-482f-912c-aa78b7b30fcf" />
 
 ### Pas 2: Verificació d'Estat
 Comprovació que tots els contenidors estan "Up" i els healthchecks (MySQL) estan "healthy" amb `docker-compose ps`.
-> **Evidència 2**: Captura de la sortida de `docker-compose ps`.
-*(Enganxa la captura aquí)*
+<img width="1274" height="326" alt="Image" src="https://github.com/user-attachments/assets/c7d290a3-0897-46da-9fc3-4df85d7d7a64" />
 
 ### Pas 3: Accés Web i HTTPS
 Accés a `http://frontend.local:8000`. S'ha de verificar:
 1.  Redirecció automàtica a HTTPS (port 8443).
 2.  Avís de certificat auto-signat (demostra que SSL funciona).
 3.  Càrrega correcta de la pàgina principal.
-> **Evidència 3**: Captura del navegador mostrant la pàgina principal carregada amb el cadenat de seguretat (o l'avís).
-*(Enganxa la captura aquí)*
+<img width="1895" height="1016" alt="Image" src="https://github.com/user-attachments/assets/1250f73b-526a-4348-9fae-aa4b0453a760" />
 
-### Pas 4: Funcionament de Redis
-En refrescar la pàgina, el comptador de "Total Page Visits" ha d'incrementar-se.
-> **Evidència 4**: Captura mostrant el comptador de visites amb un valor superior a 1.
-*(Enganxa la captura aquí)*
-
-### Pas 5: API REST
+### Pas 4: API REST
 Accés a l'endpoint `https://api.local:8443/api/articles` per verificar que retorna JSON.
-> **Evidència 5**: Captura de la resposta JSON amb la llista d'articles.
-*(Enganxa la captura aquí)*
+<img width="1712" height="923" alt="Image" src="https://github.com/user-attachments/assets/8c38ae03-2d0a-4bb0-befd-2560ccc2b37f" />
 
-### Pas 6: Administració de Base de Dades
+### Pas 5: Administració de Base de Dades
 Accés a phpMyAdmin (`http://localhost:8080`) i verificació de les taules creades.
-> **Evidència 6**: Captura de phpMyAdmin mostrant l'estructura de la taula `articles` o `users`.
-*(Enganxa la captura aquí)*
+<img width="1899" height="1018" alt="Image" src="https://github.com/user-attachments/assets/714a6e37-16ef-43b7-a38e-c4198bada1cd" />
 
-### Pas 7: Monitorització (Bonus)
+### Pas 6: Monitorització 
 Accés a Grafana (`http://localhost:3000`) per veure les mètriques en temps real.
-> **Evidència 7**: Captura del Dashboard de Grafana amb les gràfiques de CPU/RAM dels contenidors.
-*(Enganxa la captura aquí)*
-
-### Pas 8: Logs
-Verificació que els logs d'Apache s'estan escrivint a la carpeta local `./logs`.
-> **Evidència 8**: Captura de l'explorador de fitxers o terminal mostrant el contingut de la carpeta `logs`.
-*(Enganxa la captura aquí)*
+<img width="1896" height="1058" alt="Image" src="https://github.com/user-attachments/assets/9df92083-3b4e-4314-ac4d-b743e40f6541" />
 
 ---
 
