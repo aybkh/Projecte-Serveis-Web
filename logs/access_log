@@ -3,3 +3,5 @@
 {"time":"[27/Nov/2025:21:06:42 +0000]", "remote_ip":"172.18.0.1", "host":"api.local", "request":"-", "status":408, "user_agent":"-"}
 {"time":"[27/Nov/2025:21:37:45 +0000]", "remote_ip":"172.19.0.1", "host":"frontend.local", "request":"GET / HTTP/1.1", "status":301, "user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"}
 {"time":"[27/Nov/2025:21:38:37 +0000]", "remote_ip":"172.19.0.1", "host":"api.local", "request":"-", "status":408, "user_agent":"-"}
+{"time":"[29/Nov/2025:20:34:19 +0000]", "remote_ip":"172.19.0.1", "host":"api.local", "request":"-", "status":408, "user_agent":"-"}
+{"time":"[29/Nov/2025:20:34:19 +0000]", "remote_ip":"172.19.0.1", "host":"api.local", "request":"-", "status":408, "user_agent":"-"}
