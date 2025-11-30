@@ -17,7 +17,7 @@ $redis_host = getenv('REDIS_HOST');
 $mysqli = new mysqli($mysql_host, $mysql_user, $mysql_pass, $mysql_db);
 if ($mysqli->connect_error) {
     http_response_code(500);
-    echo json_encode(["error" => "Database connection failed: " . $mysqli->connect_error]);
+    echo json_encode(["error" => "Fallo en la conexión a la base de datos: " . $mysqli->connect_error]);
     exit;
 }
 
@@ -25,7 +25,7 @@ $redis = new Redis();
 try {
     $redis->connect($redis_host, 6379);
 } catch (Exception $e) {
-    // Redis might be down, but API should try to work
+    // Redis podría estar caído, pero la API debería intentar funcionar
 }
 
 $request_method = $_SERVER['REQUEST_METHOD'];
@@ -33,7 +33,7 @@ $request_uri = $_SERVER['REQUEST_URI'];
 $request_path = parse_url($request_uri, PHP_URL_PATH);
 $path = trim($request_path, '/');
 
-// Normalize path (handle /api/ prefix if present)
+// Normalizar ruta (manejar prefijo /api/ si está presente)
 if (strpos($path, 'api/') === 0) {
     $path = substr($path, 4);
 }
@@ -57,14 +57,14 @@ if ($path === 'articles') {
             $sql = "INSERT INTO articles (user_id, title, content) VALUES ('$user_id', '$title', '$content')";
             if ($mysqli->query($sql)) {
                 http_response_code(201);
-                echo json_encode(["message" => "Article created", "id" => $mysqli->insert_id]);
+                echo json_encode(["message" => "Artículo creado", "id" => $mysqli->insert_id]);
             } else {
                 http_response_code(500);
-                echo json_encode(["error" => "Failed to create article"]);
+                echo json_encode(["error" => "Fallo al crear el artículo"]);
             }
         } else {
             http_response_code(400);
-            echo json_encode(["error" => "Invalid input"]);
+            echo json_encode(["error" => "Entrada inválida"]);
         }
     }
 } elseif ($path === 'stats') {
@@ -81,6 +81,6 @@ if ($path === 'articles') {
     }
 } else {
     http_response_code(404);
-    echo json_encode(["error" => "Not Found", "path" => $path]);
+    echo json_encode(["error" => "No encontrado", "path" => $path]);
 }
 ?>
