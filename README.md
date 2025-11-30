@@ -179,10 +179,12 @@ Aquesta secció documenta el procés de validació del projecte, seguint els cri
 
 ### Pas 1: Inici del Stack
 Execució de la comanda `docker-compose up -d --build` per aixecar tota la infraestructura.
+
 <img width="1386" height="792" alt="Image" src="https://github.com/user-attachments/assets/0ba6df31-85d8-482f-912c-aa78b7b30fcf" />
 
 ### Pas 2: Verificació d'Estat
 Comprovació que tots els contenidors estan "Up" i els healthchecks (MySQL) estan "healthy" amb `docker-compose ps`.
+
 <img width="1274" height="326" alt="Image" src="https://github.com/user-attachments/assets/c7d290a3-0897-46da-9fc3-4df85d7d7a64" />
 
 ### Pas 3: Accés Web i HTTPS
@@ -190,18 +192,22 @@ Accés a `http://frontend.local:8000`. S'ha de verificar:
 1.  Redirecció automàtica a HTTPS (port 8443).
 2.  Avís de certificat auto-signat (demostra que SSL funciona).
 3.  Càrrega correcta de la pàgina principal.
+
 <img width="1895" height="1016" alt="Image" src="https://github.com/user-attachments/assets/1250f73b-526a-4348-9fae-aa4b0453a760" />
 
 ### Pas 4: API REST
 Accés a l'endpoint `https://api.local:8443/api/articles` per verificar que retorna JSON.
+
 <img width="1712" height="923" alt="Image" src="https://github.com/user-attachments/assets/8c38ae03-2d0a-4bb0-befd-2560ccc2b37f" />
 
 ### Pas 5: Administració de Base de Dades
 Accés a phpMyAdmin (`http://localhost:8080`) i verificació de les taules creades.
+
 <img width="1899" height="1018" alt="Image" src="https://github.com/user-attachments/assets/714a6e37-16ef-43b7-a38e-c4198bada1cd" />
 
 ### Pas 6: Monitorització 
 Accés a Grafana (`http://localhost:3000`) per veure les mètriques en temps real.
+
 <img width="1896" height="1058" alt="Image" src="https://github.com/user-attachments/assets/9df92083-3b4e-4314-ac4d-b743e40f6541" />
 
 ---
